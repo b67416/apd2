@@ -13,8 +13,8 @@
         android:id="@+id/textView"
         android:layout_weight="0.65"
         android:gravity="center"
-        android:background="#000000"
-        android:textColor="#ffffff"/>
+        android:textColor="#ffd08d">
+    </TextView>
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,7 +24,8 @@
         android:id="@+id/textViewEntryDateTime"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
-        android:textColor="#ffd08d"/>
+        android:textColor="#ffd08d">
+    </TextView>
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,6 +35,7 @@
         android:id="@+id/textViewEntryBloodPressure"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
-        android:textSize="36dp"
-        android:textColor="#ffd08d"/>
+        android:textSize="36sp"
+        android:textColor="#ffd08d">
+    </TextView>
 </LinearLayout>
