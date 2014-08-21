@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/appointments_add_item"
+        android:icon="@drawable/ic_action_new"
+        android:showAsAction="always"
+        android:title="Add Appointment" />
+</menu>

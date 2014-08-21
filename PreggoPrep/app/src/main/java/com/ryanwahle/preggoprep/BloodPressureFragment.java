@@ -1,7 +1,9 @@
 package com.ryanwahle.preggoprep;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class BloodPressureFragment extends Fragment {
@@ -40,7 +43,6 @@ public class BloodPressureFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Log.v("onAttach", "" + getArguments().getInt(ARG_SECTION_NUMBER));
         ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
@@ -50,12 +52,32 @@ public class BloodPressureFragment extends Fragment {
         inflater.inflate(R.menu.fragment_blood_pressure, menu);
     }
 
-    // When user clicks the Action Bar Item
+    // When user clicks the Action Bar Item to add a new Blood Pressure Entry
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO: Add the new entry logic
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        Toast.makeText(getActivity().getApplicationContext(), "<TEMPORARY> Add new blood pressure recording", Toast.LENGTH_LONG).show();
+        builder.setView(inflater.inflate(R.layout.dialog_blood_pressure_new_entry, null));
+        builder.setTitle("New Blood Pressure Entry");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        builder.show();
+
+
 
         return true;
     }

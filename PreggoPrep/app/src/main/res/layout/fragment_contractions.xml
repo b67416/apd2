@@ -2,13 +2,35 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#89dbec">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Temporary Contractions"
+        android:text="Chart"
         android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+        android:layout_weight="0.30"
+        android:gravity="center"
+        android:textColor="#6e006c">
+    </TextView>
+
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Contraction has Started"
+        android:id="@+id/buttonContractionStart"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Contraction is Gone"
+        android:id="@+id/buttonContractionFinish"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:enabled="false" />
+
+
 </LinearLayout>

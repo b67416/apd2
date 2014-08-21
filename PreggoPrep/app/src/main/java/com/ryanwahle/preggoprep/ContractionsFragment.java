@@ -2,30 +2,22 @@ package com.ryanwahle.preggoprep;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-/**
- * Created by ryanwahle on 8/13/14.
- */
 public class ContractionsFragment extends Fragment {
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private SQLiteDatabase preggoPrepDatabase = null;
+    private String contractionStartTimeStampFromDBString = null;
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
     public static ContractionsFragment newInstance(int sectionNumber) {
         ContractionsFragment fragment = new ContractionsFragment();
         Bundle args = new Bundle();
@@ -41,7 +33,60 @@ public class ContractionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contractions, container, false);
+
+        // Setup both buttons onClick
+        final Button contractionStartButton = (Button) rootView.findViewById(R.id.buttonContractionStart);
+        final Button contractionFinishButton = (Button) rootView.findViewById(R.id.buttonContractionFinish);
+
+        contractionStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // User clicked Start button, so disable it and enable the stop button
+                contractionStartButton.setEnabled(false);
+                contractionFinishButton.setEnabled(true);
+
+                // Get the SQL current timestamp so we can enter it when the user selects the stop button
+                Cursor cursor = preggoPrepDatabase.rawQuery("SELECT CURRENT_TIMESTAMP as dbTimeStamp", new String[0]);
+                cursor.moveToFirst();
+                contractionStartTimeStampFromDBString = cursor.getString(cursor.getColumnIndex("dbTimeStamp"));
+            }
+        });
+
+        contractionFinishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // User clicked Stop button, so disable it and enable the start button
+                contractionStartButton.setEnabled(true);
+                contractionFinishButton.setEnabled(false);
+
+                // Enter a new entry into the database for the contraction
+                preggoPrepDatabase.execSQL("INSERT INTO contractions (start, stop) values ('" + contractionStartTimeStampFromDBString + "', CURRENT_TIMESTAMP)");
+
+                contractionStartTimeStampFromDBString = null;
+
+                getContractionsFromDB();
+            }
+        });
+
+        // Setup the SQLite Database
+        preggoPrepDatabase = getActivity().openOrCreateDatabase("preggoprep", Context.MODE_PRIVATE, null);
+        preggoPrepDatabase.execSQL("CREATE TABLE IF NOT EXISTS contractions (_id INTEGER PRIMARY KEY AUTOINCREMENT, start TIMESTAMP, stop TIMESTAMP)");
+
+        getContractionsFromDB();
+
         return rootView;
+    }
+
+    private void getContractionsFromDB () {
+        Cursor cursor = preggoPrepDatabase.rawQuery("SELECT * FROM contractions", new String[0]);
+
+        while (cursor.moveToNext()) {
+            Integer rowID = cursor.getInt(cursor.getColumnIndex("_id"));
+            String startContractionTimeStamp = cursor.getString(cursor.getColumnIndex("start"));
+            String stopContractionTimeStamp = cursor.getString(cursor.getColumnIndex("stop"));
+
+            Log.v("Contraction Entry Found", "ID: " + rowID + "\tStart Timestamp: " + startContractionTimeStamp + "\tStop Timestamp: " + stopContractionTimeStamp);
+        }
     }
 
     @Override
@@ -49,6 +94,12 @@ public class ContractionsFragment extends Fragment {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
+    }
+
+    @Override
+    public void onDestroyView() {
+        preggoPrepDatabase.close();
+        super.onDestroyView();
     }
 
 }
