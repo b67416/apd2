@@ -2,6 +2,7 @@ package com.ryanwahle.preggoprep;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -58,27 +59,10 @@ public class BloodPressureFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.dialog_blood_pressure_new_entry, null));
-        builder.setTitle("New Blood Pressure Entry");
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-
-        builder.show();
-
-
+        BloodPressureNewEntryDialog bloodPressureNewEntryDialog = new BloodPressureNewEntryDialog();
+        bloodPressureNewEntryDialog.show(getFragmentManager(), "New Blood Pressure Entry");
 
         return true;
     }
 }
+

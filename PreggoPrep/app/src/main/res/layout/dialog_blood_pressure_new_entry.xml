@@ -4,11 +4,112 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="DateTime"
-        android:id="@+id/dialog_textViewDate"
-        android:layout_gravity="center_horizontal" />
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date:"
+                android:layout_marginRight="100dp"
+                android:textSize="17sp"
+                android:textIsSelectable="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose A Date"
+                android:id="@+id/textViewSetDate"
+                android:clickable="true"
+                android:layout_gravity="top" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time:"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose A Time"
+                android:id="@+id/textViewSetTime"
+                android:clickable="true" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Blood Pressure:"
+                android:id="@+id/textView4"
+                android:textSize="17sp"
+                android:gravity="center"
+                android:layout_marginRight="20dp" />
+
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/systolicNumberPicker"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:gravity="center_horizontal" />
+
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/diastolicNumberPicker"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:gravity="center_horizontal" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView5" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Systolic"
+                android:id="@+id/textView2"
+                android:gravity="center_horizontal" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Diastolic"
+                android:id="@+id/textView3"
+                android:gravity="center_horizontal" />
+        </TableRow>
+
+    </TableLayout>
+
 </LinearLayout>

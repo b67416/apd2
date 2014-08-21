@@ -1,12 +1,14 @@
 package com.ryanwahle.preggoprep;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
@@ -70,5 +72,17 @@ public class AppointmentsFragment extends ListFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.v("appointmentsfragment", "on menu created");
         inflater.inflate(R.menu.fragment_appointments, menu);
+    }
+
+    // When user clicks the Action Bar Item to add a new Blood Pressure Entry
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        AppointmentsNewEntryDialog appointmentsNewEntryDialog = new AppointmentsNewEntryDialog();
+        appointmentsNewEntryDialog.show(getFragmentManager(), "New Appointment Entry");
+
+        return true;
     }
 }

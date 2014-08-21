@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date:"
+                android:layout_marginRight="50dp"
+                android:textSize="17sp"
+                android:textIsSelectable="false"
+                android:layout_column="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose A Date"
+                android:id="@+id/appointments_newEntry_textViewSetDate"
+                android:clickable="true"
+                android:textSize="17sp"
+                android:layout_gravity="top"
+                android:layout_column="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time:"
+                android:textSize="17sp"
+                android:layout_column="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose A Time"
+                android:id="@+id/appointments_newEntry_textViewSetTime"
+                android:textSize="17sp"
+                android:clickable="true"
+                android:layout_column="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name:"
+                android:textSize="17sp"
+                android:layout_column="0" />
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:hint="Enter Name"
+                android:id="@+id/appointments_newEntry_textViewDoctor"
+                android:textSize="17sp"
+                android:layout_column="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location:"
+                android:textSize="17sp"
+                android:layout_column="0" />
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:isScrollContainer="true"
+                android:inputType="textMultiLine"
+                android:lines="2"
+                android:gravity="start|top"
+                android:hint="Enter Address"
+                android:id="@+id/appointments_newEntry_textViewLocation"
+                android:textSize="17sp"
+                android:layout_column="1" />
+
+        </TableRow>
+
+
+
+
+    </TableLayout>
+
+</LinearLayout>
