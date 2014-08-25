@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Elapsed Time:"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:textSize="17dp" />
+
+    <Chronometer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/kick_times_tracker_chronometer_elapsedTime"
+        android:layout_gravity="center_horizontal"
+        android:textSize="17dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/kick_times_tracker_textView_numberOfKicks"
+        android:layout_gravity="center_horizontal"
+        android:textSize="40dp"
+        android:layout_marginTop="50dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KICKS"
+        android:id="@+id/textView3"
+        android:layout_gravity="center_horizontal"
+        android:textSize="40dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="The Baby Kicked"
+        android:id="@+id/kick_times_tracker_button_kicked"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp" />
+
+</LinearLayout>

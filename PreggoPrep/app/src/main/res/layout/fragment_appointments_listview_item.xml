@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:orientation="vertical"
-        android:background="#006884"
+        android:background="#fa9d00"
         android:padding="10dp"
         android:gravity="center_vertical|center_horizontal">
 
@@ -23,7 +23,7 @@
             android:textSize="11sp"
             android:layout_gravity="center_horizontal"
             android:typeface="sans"
-            android:textColor="#feabb0" />
+            android:textColor="@android:color/black" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
             android:id="@+id/appointments_textViewTime"
             android:layout_gravity="center_horizontal"
             android:typeface="sans"
-            android:textColor="#feabb0" />
+            android:textColor="@android:color/black" />
     </LinearLayout>
 
     <LinearLayout
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Doctor Name"
-            android:textColor="#b00051"
+            android:textColor="@android:color/black"
             android:id="@+id/appointments_textViewDoctorName"
             android:layout_margin="5dp"
             android:typeface="serif" />
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
-            android:textColorLink="#b00051"
+            android:textColorLink="@android:color/black"
             android:id="@+id/appointments_textViewLocation"
             android:layout_margin="5dp"
             android:autoLink="map"

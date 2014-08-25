@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Temporary Kick Times"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+    <ListView android:id="@id/android:list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#aaaaaa"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false"
+        android:choiceMode="none"
+        android:divider="@null" />
+
+    <TextView android:id="@id/android:empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No Kick Time Recordings"
+        android:background="#aaaaaa"
+        android:textColor="@android:color/black"
+        android:typeface="sans"
+        android:textSize="27sp"
+        android:gravity="center_vertical|center_horizontal" />
 </LinearLayout>

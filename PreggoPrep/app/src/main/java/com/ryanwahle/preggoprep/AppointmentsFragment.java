@@ -27,7 +27,7 @@ public class AppointmentsFragment extends ListFragment {
         return fragment;
     }
 
-    public AppointmentsFragment() {        }
+    public AppointmentsFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,14 +41,14 @@ public class AppointmentsFragment extends ListFragment {
         appointmentHashMap.put("date", "12/23/2014");
         appointmentHashMap.put("time", "5:00 AM");
         appointmentHashMap.put("doctor_name", "Dr. Johnstone");
-        appointmentHashMap.put("location", "815 E Rose Lane, Phoenix, AZ 85020");
+        appointmentHashMap.put("location", "123 Smith St, San Fransisco, CA 90253");
         appointmentsArrayList.add(appointmentHashMap);
 
         appointmentHashMap = new HashMap<String, String>();
         appointmentHashMap.put("date", "12/25/2014");
         appointmentHashMap.put("time", "9:00 AM");
         appointmentHashMap.put("doctor_name", "Dr. Christmas");
-        appointmentHashMap.put("location", "1649 San Esteban Circle, Roseville, CA 95747");
+        appointmentHashMap.put("location", "245 Arden Blvd, Beverly Hills, CA 90210");
         appointmentsArrayList.add(appointmentHashMap);
 
         String[] mapFrom = { "date", "time", "doctor_name", "location" };
