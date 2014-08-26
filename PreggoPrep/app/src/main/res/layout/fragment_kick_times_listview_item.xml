@@ -6,14 +6,15 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
 
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Image"
             android:id="@+id/textView"
             android:gravity="center"
-            android:layout_margin="10dp" />
+            android:src="@drawable/kick_foot"
+            android:padding="10dp" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -38,7 +39,36 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <LinearLayout
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:background="#fa9d00"
+        android:paddingLeft="15dp"
+        android:paddingRight="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Start: "
+            android:id="@+id/textView3"
+            android:layout_weight="2"
+            android:gravity="center_vertical|right"
+            android:textStyle="italic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Stop:"
+            android:id="@+id/textView4"
+            android:layout_weight="2"
+            android:gravity="center_vertical|right"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+    <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -47,19 +77,19 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Start Time"
                 android:id="@+id/kick_times_textView_startTime"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:layout_weight="2" />
 
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="End Time"
                 android:id="@+id/kick_times_textView_stopTime"
-                android:gravity="center"
-                android:layout_weight="2" />
+                android:layout_weight="2"
+                android:gravity="center_vertical" />
         </LinearLayout>
 </LinearLayout>

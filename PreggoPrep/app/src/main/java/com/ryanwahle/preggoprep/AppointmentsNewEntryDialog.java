@@ -4,8 +4,11 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +23,8 @@ import java.util.Calendar;
 public class AppointmentsNewEntryDialog extends DialogFragment {
     private AlertDialog newEntryDialog = null;
 
+    private SQLiteDatabase preggoPrepDatabase = null;
+
     private TextView entryDateTextView = null;
     private TextView entryTimeTextView = null;
     private TextView entryDoctorTextView = null;
@@ -28,10 +33,15 @@ public class AppointmentsNewEntryDialog extends DialogFragment {
     private boolean isDateSet = false;
     private boolean isTimeSet = false;
 
+    private Fragment loadingFragment = null;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder newEntryDialogBuilder = new AlertDialog.Builder(getActivity());
         View rootView = getActivity().getLayoutInflater().inflate(R.layout.dialog_appointments_new_entry, null);
+
+        // Setup the SQLite Database
+        preggoPrepDatabase = getActivity().openOrCreateDatabase("preggoprep", Context.MODE_PRIVATE, null);
 
         // Setup the interface references
         entryDateTextView = (TextView) rootView.findViewById(R.id.appointments_newEntry_textViewSetDate);
@@ -47,6 +57,7 @@ public class AppointmentsNewEntryDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Log.v("New BP Entry", "Date: " + entryDateTextView.getText() + "\tTime: " + entryTimeTextView.getText() + "\tDoctor: " + entryDoctorTextView.getText() + "\tAddress: " + entryLocationTextView.getText());
+                preggoPrepDatabase.execSQL("INSERT INTO appointments (date, time, name, location) values ('" + entryDateTextView.getText() + "', '" + entryTimeTextView.getText() + "', '" + entryDoctorTextView.getText() + "', '" + entryLocationTextView.getText() + "')");
             }
         });
 
@@ -70,7 +81,7 @@ public class AppointmentsNewEntryDialog extends DialogFragment {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        entryDateTextView.setText((month + 1) + "/" + day + "/" + year);
+                        entryDateTextView.setText(year + "-" + (month + 1) + "-" + day);
                         isDateSet = true;
                         resetDialogPositiveButton();
                     }
@@ -127,6 +138,17 @@ public class AppointmentsNewEntryDialog extends DialogFragment {
         });
 
         return newEntryDialog;
+    }
+
+    public void setLoadingFragment(Fragment fragment) {
+        loadingFragment = fragment;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        preggoPrepDatabase.close();
+        loadingFragment.onResume();
     }
 
     private void resetDialogPositiveButton () {

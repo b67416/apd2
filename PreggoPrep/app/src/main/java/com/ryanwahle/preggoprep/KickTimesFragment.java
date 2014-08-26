@@ -2,9 +2,11 @@ package com.ryanwahle.preggoprep;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.ListFragment;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,8 @@ import java.util.HashMap;
 
 public class KickTimesFragment extends ListFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+    private SQLiteDatabase preggoPrepDatabase = null;
 
     public static KickTimesFragment newInstance(int sectionNumber) {
         KickTimesFragment fragment = new KickTimesFragment();
@@ -37,33 +41,57 @@ public class KickTimesFragment extends ListFragment {
 
         setHasOptionsMenu(true);
 
+        // Setup the SQLite Database
+        preggoPrepDatabase = getActivity().openOrCreateDatabase("preggoprep", Context.MODE_PRIVATE, null);
+        preggoPrepDatabase.execSQL("CREATE TABLE IF NOT EXISTS kick_times (_id INTEGER PRIMARY KEY AUTOINCREMENT, start TIMESTAMP, stop TIMESTAMP, num_of_kicks INTEGER)");
+
+        return rootView;
+    }
+
+    private void getKickTimesFromDB () {
+        Cursor cursor = preggoPrepDatabase.rawQuery("SELECT * FROM kick_times", new String[0]);
+
         ArrayList<HashMap<String, String>> kicktimesArrayList = new ArrayList<HashMap<String, String>>();
 
-        HashMap<String,String> kicktimesHashMap = new HashMap<String, String>();
-        kicktimesHashMap.put("num_of_kicks", "15");
-        kicktimesHashMap.put("start_time", "1/23/14 @ 10:01 AM");
-        kicktimesHashMap.put("stop_time", "1/23/14 @ 11:01 AM");
-        kicktimesArrayList.add(kicktimesHashMap);
+        while (cursor.moveToNext()) {
+            Integer rowID = cursor.getInt(cursor.getColumnIndex("_id"));
+            String startTimeStamp = cursor.getString(cursor.getColumnIndex("start"));
+            String stopTimeStamp = cursor.getString(cursor.getColumnIndex("stop"));
+            Integer numOfKicksInteger = cursor.getInt(cursor.getColumnIndex("num_of_kicks"));
 
-        kicktimesHashMap = new HashMap<String, String>();
-        kicktimesHashMap.put("num_of_kicks", "9");
-        kicktimesHashMap.put("start_time", "1/25/14 @ 9:45 PM");
-        kicktimesHashMap.put("stop_time", "1/25/14 @ 10:45 PM");
-        kicktimesArrayList.add(kicktimesHashMap);
+            HashMap<String, String> kicktimeesHashMap = new HashMap<String, String>();
+            kicktimeesHashMap.put("num_of_kicks", numOfKicksInteger.toString());
+            kicktimeesHashMap.put("start_time", startTimeStamp);
+            kicktimeesHashMap.put("stop_time", stopTimeStamp);
+
+            kicktimesArrayList.add(kicktimeesHashMap);
+
+            //Log.v("Kick Time Entry Found", "ID: " + rowID + "\tStart Timestamp: " + startTimeStamp + "\tStop Timestamp: " + stopTimeStamp + "\tKick Count: " + numOfKicksInteger);
+        }
 
         String[] mapFrom = { "num_of_kicks", "start_time", "stop_time" };
         int[] mapTo = { R.id.kick_times_textView_numberOfKicks, R.id.kick_times_textView_startTime, R.id.kick_times_textView_stopTime };
 
         SimpleAdapter adapter = new SimpleAdapter(getActivity(), kicktimesArrayList, R.layout.fragment_kick_times_listview_item, mapFrom, mapTo);
         setListAdapter(adapter);
-
-        return rootView;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        preggoPrepDatabase.close();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getKickTimesFromDB();
     }
 
     // Inflate Action Bar Items
@@ -75,19 +103,11 @@ public class KickTimesFragment extends ListFragment {
     // When user clicks the Action Bar Item to add a new Blood Pressure Entry
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-       // FragmentManager fragmentManager = getFragmentManager();
-
-      //  fragmentManager.beginTransaction()
-       //         .replace(this.getId(), new KickTimesTrackerFragment())
-       //         .commit();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-
-        KickTimesTrackerFragment kickTimesTrackerFragment = new KickTimesTrackerFragment();
-        kickTimesTrackerFragment.show(getFragmentManager(), "New Kick Time Entry");
+        KickTimesNewEntryDialog kickTimesNewEntryDialog = new KickTimesNewEntryDialog();
+        kickTimesNewEntryDialog.setLoadingFragment(this);
+        kickTimesNewEntryDialog.setCancelable(false);
+        kickTimesNewEntryDialog.show(getFragmentManager(), "New Kick Time Entry");
 
         return true;
     }
-
 }

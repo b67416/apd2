@@ -4,8 +4,11 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -23,6 +26,9 @@ import java.util.Calendar;
 
 public class BloodPressureNewEntryDialog extends DialogFragment {
     private AlertDialog newEntryDialog = null;
+    private Fragment loadingFragment = null;
+
+    private SQLiteDatabase preggoPrepDatabase = null;
 
     private NumberPicker systolicNumberPicker = null;
     private NumberPicker diastolicNumberPicker = null;
@@ -44,6 +50,9 @@ public class BloodPressureNewEntryDialog extends DialogFragment {
         final AlertDialog.Builder newEntryDialogBuilder = new AlertDialog.Builder(getActivity());
         View rootView = getActivity().getLayoutInflater().inflate(R.layout.dialog_blood_pressure_new_entry, null);
 
+        // Setup the SQLite Database
+        preggoPrepDatabase = getActivity().openOrCreateDatabase("preggoprep", Context.MODE_PRIVATE, null);
+
         // Setup the dialog
         newEntryDialogBuilder.setView(rootView);
         newEntryDialogBuilder.setTitle("New Blood Pressure Entry");
@@ -51,7 +60,8 @@ public class BloodPressureNewEntryDialog extends DialogFragment {
         newEntryDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Log.v("New BP Entry", "Date: " + entryDateTextView.getText() + "\tTime: " + entryTimeTextView.getText() + "\tSystolic: " + systolicNumberPicker.getValue() + "\tDiastolic: " + diastolicNumberPicker.getValue());
+                preggoPrepDatabase.execSQL("INSERT INTO blood_pressure (date, time, systolic, diastolic) VALUES ('" + entryDateTextView.getText() + "', '" + entryTimeTextView.getText() + "', " + systolicNumberPicker.getValue() + ", " + diastolicNumberPicker.getValue() + ")");
+                //Log.v("New BP Entry", "Date: " + entryDateTextView.getText() + "\tTime: " + entryTimeTextView.getText() + "\tSystolic: " + systolicNumberPicker.getValue() + "\tDiastolic: " + diastolicNumberPicker.getValue());
             }
         });
 
@@ -92,7 +102,7 @@ public class BloodPressureNewEntryDialog extends DialogFragment {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        entryDateTextView.setText((month + 1) + "/" + day + "/" + year);
+                        entryDateTextView.setText(year + "-" + (month + 1) + "-" + day);
                         isDateSet = true;
                         resetDialogPositiveButton();
                     }
@@ -127,5 +137,16 @@ public class BloodPressureNewEntryDialog extends DialogFragment {
         if (isDateSet && isTimeSet) {
             newEntryDialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(true);
         }
+    }
+
+    public void setLoadingFragment(Fragment fragment) {
+        loadingFragment = fragment;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        preggoPrepDatabase.close();
+        loadingFragment.onResume();
     }
 }
