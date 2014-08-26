@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -58,6 +59,7 @@ public class AppointmentsNewEntryDialog extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 Log.v("New BP Entry", "Date: " + entryDateTextView.getText() + "\tTime: " + entryTimeTextView.getText() + "\tDoctor: " + entryDoctorTextView.getText() + "\tAddress: " + entryLocationTextView.getText());
                 preggoPrepDatabase.execSQL("INSERT INTO appointments (date, time, name, location) values ('" + entryDateTextView.getText() + "', '" + entryTimeTextView.getText() + "', '" + entryDoctorTextView.getText() + "', '" + entryLocationTextView.getText() + "')");
+                Toast.makeText(getActivity(), "New Appointment Saved!", Toast.LENGTH_LONG).show();
             }
         });
 

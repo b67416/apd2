@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class KickTimesNewEntryDialog extends DialogFragment {
 
@@ -54,6 +55,7 @@ public class KickTimesNewEntryDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 preggoPrepDatabase.execSQL("INSERT INTO kick_times (start, stop, num_of_kicks) values ('" + startTimeStampFromDBString + "', CURRENT_TIMESTAMP, " + numberOfKicks + ")");
+                Toast.makeText(getActivity(), "New Kick Time Entry Saved!", Toast.LENGTH_LONG).show();
             }
         });
 

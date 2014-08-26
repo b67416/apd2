@@ -10,8 +10,9 @@
         android:background="#aaaaaa"
         android:layout_weight="1"
         android:drawSelectorOnTop="false"
-        android:choiceMode="none"
-        android:divider="@null" />
+        android:divider="@null"
+        android:choiceMode="multipleChoice"
+        android:clickable="true" />
 
     <TextView android:id="@id/android:empty"
         android:layout_width="match_parent"

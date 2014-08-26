@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class ContractionsFragment extends Fragment {
 
@@ -61,6 +62,7 @@ public class ContractionsFragment extends Fragment {
 
                 // Enter a new entry into the database for the contraction
                 preggoPrepDatabase.execSQL("INSERT INTO contractions (start, stop) values ('" + contractionStartTimeStampFromDBString + "', CURRENT_TIMESTAMP)");
+                Toast.makeText(getActivity(), "New Contraction Saved!", Toast.LENGTH_LONG).show();
 
                 contractionStartTimeStampFromDBString = null;
 

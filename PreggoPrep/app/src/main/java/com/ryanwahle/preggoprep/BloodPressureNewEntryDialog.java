@@ -61,6 +61,7 @@ public class BloodPressureNewEntryDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 preggoPrepDatabase.execSQL("INSERT INTO blood_pressure (date, time, systolic, diastolic) VALUES ('" + entryDateTextView.getText() + "', '" + entryTimeTextView.getText() + "', " + systolicNumberPicker.getValue() + ", " + diastolicNumberPicker.getValue() + ")");
+                Toast.makeText(getActivity(), "New Blood Pressure Entry Saved!", Toast.LENGTH_LONG).show();
                 //Log.v("New BP Entry", "Date: " + entryDateTextView.getText() + "\tTime: " + entryTimeTextView.getText() + "\tSystolic: " + systolicNumberPicker.getValue() + "\tDiastolic: " + diastolicNumberPicker.getValue());
             }
         });

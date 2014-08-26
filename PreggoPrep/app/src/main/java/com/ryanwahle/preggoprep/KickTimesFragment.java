@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class KickTimesFragment extends ListFragment {
     private void getKickTimesFromDB () {
         Cursor cursor = preggoPrepDatabase.rawQuery("SELECT * FROM kick_times", new String[0]);
 
-        ArrayList<HashMap<String, String>> kicktimesArrayList = new ArrayList<HashMap<String, String>>();
+        final ArrayList<HashMap<String, String>> kicktimesArrayList = new ArrayList<HashMap<String, String>>();
 
         while (cursor.moveToNext()) {
             Integer rowID = cursor.getInt(cursor.getColumnIndex("_id"));
@@ -60,6 +61,7 @@ public class KickTimesFragment extends ListFragment {
             Integer numOfKicksInteger = cursor.getInt(cursor.getColumnIndex("num_of_kicks"));
 
             HashMap<String, String> kicktimeesHashMap = new HashMap<String, String>();
+            kicktimeesHashMap.put("_id", rowID.toString());
             kicktimeesHashMap.put("num_of_kicks", numOfKicksInteger.toString());
             kicktimeesHashMap.put("start_time", startTimeStamp);
             kicktimeesHashMap.put("stop_time", stopTimeStamp);
@@ -72,8 +74,31 @@ public class KickTimesFragment extends ListFragment {
         String[] mapFrom = { "num_of_kicks", "start_time", "stop_time" };
         int[] mapTo = { R.id.kick_times_textView_numberOfKicks, R.id.kick_times_textView_startTime, R.id.kick_times_textView_stopTime };
 
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(), kicktimesArrayList, R.layout.fragment_kick_times_listview_item, mapFrom, mapTo);
+        final SimpleAdapter adapter = new SimpleAdapter(getActivity(), kicktimesArrayList, R.layout.fragment_kick_times_listview_item, mapFrom, mapTo);
         setListAdapter(adapter);
+
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                final int position = pos;
+                final HashMap<String, String> kicktimeHashMap = kicktimesArrayList.get(position);
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                alertDialog.setTitle("Delete Kick Time Entry");
+                alertDialog.setMessage("Are you sure you want delete this entry?");
+                alertDialog.setNegativeButton("No", null);
+                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        preggoPrepDatabase.execSQL("DELETE FROM kick_times WHERE _id = " + kicktimeHashMap.get("_id"));
+                        kicktimesArrayList.remove(position);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                alertDialog.show();
+
+                return true;
+            }
+        });
+
     }
 
     @Override

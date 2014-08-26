@@ -4,16 +4,22 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
@@ -23,6 +29,7 @@ public class AppointmentsFragment extends ListFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private SQLiteDatabase preggoPrepDatabase = null;
+    private ArrayList<HashMap<String, String>> appointmentsArrayList = null;
 
     public static AppointmentsFragment newInstance(int sectionNumber) {
         AppointmentsFragment fragment = new AppointmentsFragment();
@@ -50,7 +57,7 @@ public class AppointmentsFragment extends ListFragment {
     private void getAppointmentsFromDB () {
         Cursor cursor = preggoPrepDatabase.rawQuery("SELECT * FROM appointments", new String[0]);
 
-        ArrayList<HashMap<String, String>> appointmentsArrayList = new ArrayList<HashMap<String, String>>();
+        appointmentsArrayList = new ArrayList<HashMap<String, String>>();
 
         while (cursor.moveToNext()) {
             Integer rowID = cursor.getInt(cursor.getColumnIndex("_id"));
@@ -60,6 +67,7 @@ public class AppointmentsFragment extends ListFragment {
             String entryLocation = cursor.getString(cursor.getColumnIndex("location"));
 
             HashMap<String, String> appointmentHashMap = new HashMap<String, String>();
+            appointmentHashMap.put("_id", rowID.toString());
             appointmentHashMap.put("date", entryDate);
             appointmentHashMap.put("time", entryTime);
             appointmentHashMap.put("name", entryName);
@@ -73,8 +81,32 @@ public class AppointmentsFragment extends ListFragment {
         String[] mapFrom = { "date", "time", "name", "location" };
         int[] mapTo = { R.id.appointments_textViewDate, R.id.appointments_textViewTime, R.id.appointments_textViewDoctorName, R.id.appointments_textViewLocation };
 
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(), appointmentsArrayList, R.layout.fragment_appointments_listview_item, mapFrom, mapTo);
+        final SimpleAdapter adapter = new SimpleAdapter(getActivity(), appointmentsArrayList, R.layout.fragment_appointments_listview_item, mapFrom, mapTo);
         setListAdapter(adapter);
+
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                final int position = pos;
+                final HashMap<String, String> appointmentHashMap = appointmentsArrayList.get(position);
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                alertDialog.setTitle("Delete Appointment");
+                alertDialog.setMessage("Are you sure you want delete this appointment?");
+                alertDialog.setNegativeButton("No", null);
+                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        preggoPrepDatabase.execSQL("DELETE FROM appointments WHERE _id = " + appointmentHashMap.get("_id"));
+                        appointmentsArrayList.remove(position);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                alertDialog.show();
+
+                return true;
+            }
+        });
+
+
     }
 
     @Override
