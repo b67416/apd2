@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="1 min 30 sec"
-        android:id="@+id/textView"
+        android:id="@+id/contractions_textView_averageContractions"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp" />
 
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Average Time Inbetween"
+        android:text="Average Time Between Contractions"
         android:id="@+id/textView4"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp" />
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="10 min 10 sec"
-        android:id="@+id/textView2"
+        android:id="@+id/contractions_textView_averageBetweenContractions"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp" />
 

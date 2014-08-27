@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
@@ -23,8 +24,8 @@ public class ContractionsFragment extends Fragment {
     private SQLiteDatabase preggoPrepDatabase = null;
     private String contractionStartTimeStampFromDBString = null;
 
-    private RelativeLayout graphViewLayout = null;
-    private GraphView graphView = null;
+    private TextView averageContractionsTextView = null;
+    private TextView averageBetweenContractionsTextView = null;
 
     public static ContractionsFragment newInstance(int sectionNumber) {
         ContractionsFragment fragment = new ContractionsFragment();
@@ -41,6 +42,10 @@ public class ContractionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contractions, container, false);
+
+        // Links to TextViews
+        averageContractionsTextView = (TextView) rootView.findViewById(R.id.contractions_textView_averageContractions);
+        averageBetweenContractionsTextView = (TextView) rootView.findViewById(R.id.contractions_textView_averageBetweenContractions);
 
         // Setup both buttons onClick
         final Button contractionStartButton = (Button) rootView.findViewById(R.id.buttonContractionStart);
@@ -83,29 +88,47 @@ public class ContractionsFragment extends Fragment {
 
         getContractionsFromDB();
 
-        // Setup the graph view
-        graphViewLayout = (RelativeLayout) rootView.findViewById(R.id.contractions_chartPlaceholder);
-        graphView = new LineGraphView(getActivity(), "");
-
-        graphView.getGraphViewStyle().setNumHorizontalLabels(1);
-        graphView.getGraphViewStyle().setNumVerticalLabels(1);
-
-        graphViewLayout.addView(graphView);
-
-
         return rootView;
     }
 
     private void getContractionsFromDB () {
-        Cursor cursor = preggoPrepDatabase.rawQuery("SELECT * FROM contractions", new String[0]);
+        Cursor cursor = preggoPrepDatabase.rawQuery("SELECT strftime('%s',start) as startTime, strftime('%s',stop) as stopTime, strftime('%s',stop) - strftime('%s',start) as contractionTime FROM contractions", new String[0]);
+
+        Integer averageContractionsInteger = 0;
+        Integer averageBetweenContractionsInteger = 0;
+        Integer lastStopTime = 0;
 
         while (cursor.moveToNext()) {
-            Integer rowID = cursor.getInt(cursor.getColumnIndex("_id"));
-            String startContractionTimeStamp = cursor.getString(cursor.getColumnIndex("start"));
-            String stopContractionTimeStamp = cursor.getString(cursor.getColumnIndex("stop"));
+            Integer startContractionTimeStamp = cursor.getInt(cursor.getColumnIndex("startTime"));
+            Integer stopContractionTimeStamp = cursor.getInt(cursor.getColumnIndex("stopTime"));
+            Integer startStopDifference = cursor.getInt(cursor.getColumnIndex("contractionTime"));
 
-            Log.v("Contraction Entry Found", "ID: " + rowID + "\tStart Timestamp: " + startContractionTimeStamp + "\tStop Timestamp: " + stopContractionTimeStamp);
+            // Add the 'contraction time' running total
+            averageContractionsInteger = averageContractionsInteger + startStopDifference;
+
+            // Subtract the last stop time to this new start time and add to 'between contraction' running total.
+            if (lastStopTime != 0) {
+                averageBetweenContractionsInteger = averageBetweenContractionsInteger + (startContractionTimeStamp - lastStopTime);
+            }
+
+            Log.v("averageBetween", averageBetweenContractionsInteger.toString());
+
+            lastStopTime = stopContractionTimeStamp;
         }
+
+        averageContractionsInteger = averageContractionsInteger / cursor.getCount();
+        averageBetweenContractionsInteger = averageBetweenContractionsInteger / cursor.getCount();
+
+        averageContractionsTextView.setText(secondsToTimeString(averageContractionsInteger));
+        averageBetweenContractionsTextView.setText(secondsToTimeString(averageBetweenContractionsInteger));
+    }
+
+    private String secondsToTimeString(Integer inputSeconds) {
+        int seconds = (int) inputSeconds % 60;
+        int minutes = (int) ((inputSeconds / (60)) % 60);
+        int hours   = (int) ((inputSeconds / (60*60)) % 24);
+
+        return hours + "hr " + minutes + "mins " + seconds + "secs";
     }
 
     @Override
