@@ -105,8 +105,6 @@ public class AppointmentsFragment extends ListFragment {
                 return true;
             }
         });
-
-
     }
 
     @Override

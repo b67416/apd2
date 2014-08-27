@@ -6,23 +6,20 @@
     android:weightSum="1"
     android:background="#aaaaaa">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Chart"
-        android:id="@+id/textView"
-        android:gravity="center"
-        android:textColor="@android:color/black"
-        android:paddingTop="100dp"
-        android:paddingBottom="100dp">
-    </TextView>
+        android:layout_height="275dp"
+        android:id="@+id/blood_pressure_chartPlaceholder"
+        android:padding="10dp">
+
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Date / Time"
-        android:id="@+id/textViewEntryDateTime"
+        android:id="@+id/blood_pressure_textViewEntryDateTime"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:textColor="@android:color/black">
@@ -33,7 +30,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="109 / 81"
-        android:id="@+id/textViewEntryBloodPressure"
+        android:id="@+id/blood_pressure_textViewEntryBloodPressure"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:textSize="36sp"
@@ -47,4 +44,5 @@
         android:id="@+id/blood_pressure_buttonDelete"
         android:layout_gravity="center"
         android:layout_marginTop="50dp" />
+
 </LinearLayout>
