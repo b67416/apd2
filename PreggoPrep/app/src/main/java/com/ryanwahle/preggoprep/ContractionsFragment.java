@@ -11,13 +11,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LineGraphView;
 
 public class ContractionsFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private SQLiteDatabase preggoPrepDatabase = null;
     private String contractionStartTimeStampFromDBString = null;
+
+    private RelativeLayout graphViewLayout = null;
+    private GraphView graphView = null;
 
     public static ContractionsFragment newInstance(int sectionNumber) {
         ContractionsFragment fragment = new ContractionsFragment();
@@ -75,6 +82,16 @@ public class ContractionsFragment extends Fragment {
         preggoPrepDatabase.execSQL("CREATE TABLE IF NOT EXISTS contractions (_id INTEGER PRIMARY KEY AUTOINCREMENT, start TIMESTAMP, stop TIMESTAMP)");
 
         getContractionsFromDB();
+
+        // Setup the graph view
+        graphViewLayout = (RelativeLayout) rootView.findViewById(R.id.contractions_chartPlaceholder);
+        graphView = new LineGraphView(getActivity(), "");
+
+        graphView.getGraphViewStyle().setNumHorizontalLabels(1);
+        graphView.getGraphViewStyle().setNumVerticalLabels(1);
+
+        graphViewLayout.addView(graphView);
+
 
         return rootView;
     }
