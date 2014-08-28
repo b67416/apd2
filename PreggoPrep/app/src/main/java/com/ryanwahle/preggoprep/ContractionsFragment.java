@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.GraphViewStyle;
 import com.jjoe64.graphview.LineGraphView;
+
+import java.util.ArrayList;
 
 public class ContractionsFragment extends Fragment {
 
@@ -24,8 +29,8 @@ public class ContractionsFragment extends Fragment {
     private SQLiteDatabase preggoPrepDatabase = null;
     private String contractionStartTimeStampFromDBString = null;
 
-    private TextView averageContractionsTextView = null;
-    private TextView averageBetweenContractionsTextView = null;
+    private RelativeLayout graphViewLayout = null;
+    private GraphView graphView = null;
 
     public static ContractionsFragment newInstance(int sectionNumber) {
         ContractionsFragment fragment = new ContractionsFragment();
@@ -42,10 +47,6 @@ public class ContractionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contractions, container, false);
-
-        // Links to TextViews
-        averageContractionsTextView = (TextView) rootView.findViewById(R.id.contractions_textView_averageContractions);
-        averageBetweenContractionsTextView = (TextView) rootView.findViewById(R.id.contractions_textView_averageBetweenContractions);
 
         // Setup both buttons onClick
         final Button contractionStartButton = (Button) rootView.findViewById(R.id.buttonContractionStart);
@@ -86,6 +87,15 @@ public class ContractionsFragment extends Fragment {
         preggoPrepDatabase = getActivity().openOrCreateDatabase("preggoprep", Context.MODE_PRIVATE, null);
         preggoPrepDatabase.execSQL("CREATE TABLE IF NOT EXISTS contractions (_id INTEGER PRIMARY KEY AUTOINCREMENT, start TIMESTAMP, stop TIMESTAMP)");
 
+        // Setup the graph view
+        graphViewLayout = (RelativeLayout) rootView.findViewById(R.id.contractions_chartLayoutPlaceholder);
+        graphView = new LineGraphView(getActivity(), "");
+
+        graphView.getGraphViewStyle().setNumHorizontalLabels(1);
+        graphView.getGraphViewStyle().setNumVerticalLabels(1);
+
+        graphViewLayout.addView(graphView);
+
         getContractionsFromDB();
 
         return rootView;
@@ -96,18 +106,56 @@ public class ContractionsFragment extends Fragment {
 
         Integer lastStopTime = 0;
 
+        ArrayList<GraphView.GraphViewData> contractionLengthGraphViewDataArrayList = new ArrayList<GraphView.GraphViewData>();
+        ArrayList<GraphView.GraphViewData> betweenLengthGraphViewDataArrayList = new ArrayList<GraphView.GraphViewData>();
+
+        Integer index = 0;
         while (cursor.moveToNext()) {
             Integer startContractionTimeStamp = cursor.getInt(cursor.getColumnIndex("startTime"));
             Integer stopContractionTimeStamp = cursor.getInt(cursor.getColumnIndex("stopTime"));
             Integer startStopDifference = cursor.getInt(cursor.getColumnIndex("contractionTime"));
 
-           
-            if (lastStopTime != 0) {
+            contractionLengthGraphViewDataArrayList.add(new GraphView.GraphViewData(index++, startStopDifference));
 
+
+            if (lastStopTime != 0) {
+                betweenLengthGraphViewDataArrayList.add(new GraphView.GraphViewData(index++, startContractionTimeStamp - lastStopTime));
             }
 
             lastStopTime = stopContractionTimeStamp;
         }
+
+        GraphViewSeries contractionLengthGraphViewSeries = new GraphViewSeries(
+                "Contraction Length (sec)",
+                new GraphViewSeries.GraphViewSeriesStyle(Color.RED, 5),
+                contractionLengthGraphViewDataArrayList.toArray(new GraphView.GraphViewData[contractionLengthGraphViewDataArrayList.size()]));
+
+
+        GraphViewSeries betweenLengthGraphViewSeries = new GraphViewSeries(
+                "Between Contractions (sec)",
+                new GraphViewSeries.GraphViewSeriesStyle(Color.BLUE, 5),
+                betweenLengthGraphViewDataArrayList.toArray(new GraphView.GraphViewData[betweenLengthGraphViewDataArrayList.size()]));
+
+
+        graphView.removeAllSeries();
+
+        int sizeOfGraph = contractionLengthGraphViewDataArrayList.size();
+
+        graphView.getGraphViewStyle().setNumVerticalLabels(0);
+        graphView.getGraphViewStyle().setNumHorizontalLabels(0);
+        graphView.getGraphViewStyle().setGridStyle(GraphViewStyle.GridStyle.BOTH);
+
+        graphView.setShowLegend(true);
+        graphView.getGraphViewStyle().setLegendWidth(500);
+
+        graphView.setViewPort(1, 10);
+        graphView.setScrollable(true);
+        graphView.setScalable(true);
+
+        graphView.addSeries(contractionLengthGraphViewSeries);
+        graphView.addSeries(betweenLengthGraphViewSeries);
+
+
     }
 
     @Override
