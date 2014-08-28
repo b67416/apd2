@@ -5,41 +5,12 @@
     android:layout_height="match_parent"
     android:background="#aaaaaa">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Average Contraction Length"
-        android:id="@+id/textView3"
+    <RelativeLayout
+        android:id="@+id/contractions_chartLayoutPlaceholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="1 min 30 sec"
-        android:id="@+id/contractions_textView_averageContractions"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Average Time Between Contractions"
-        android:id="@+id/textView4"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="10 min 10 sec"
-        android:id="@+id/contractions_textView_averageBetweenContractions"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp" />
+        android:layout_weight="1"></RelativeLayout>
 
     <Button
         android:layout_width="250dp"

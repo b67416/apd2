@@ -94,8 +94,6 @@ public class ContractionsFragment extends Fragment {
     private void getContractionsFromDB () {
         Cursor cursor = preggoPrepDatabase.rawQuery("SELECT strftime('%s',start) as startTime, strftime('%s',stop) as stopTime, strftime('%s',stop) - strftime('%s',start) as contractionTime FROM contractions", new String[0]);
 
-        Integer averageContractionsInteger = 0;
-        Integer averageBetweenContractionsInteger = 0;
         Integer lastStopTime = 0;
 
         while (cursor.moveToNext()) {
@@ -103,32 +101,13 @@ public class ContractionsFragment extends Fragment {
             Integer stopContractionTimeStamp = cursor.getInt(cursor.getColumnIndex("stopTime"));
             Integer startStopDifference = cursor.getInt(cursor.getColumnIndex("contractionTime"));
 
-            // Add the 'contraction time' running total
-            averageContractionsInteger = averageContractionsInteger + startStopDifference;
-
-            // Subtract the last stop time to this new start time and add to 'between contraction' running total.
+           
             if (lastStopTime != 0) {
-                averageBetweenContractionsInteger = averageBetweenContractionsInteger + (startContractionTimeStamp - lastStopTime);
-            }
 
-            Log.v("averageBetween", averageBetweenContractionsInteger.toString());
+            }
 
             lastStopTime = stopContractionTimeStamp;
         }
-
-        averageContractionsInteger = averageContractionsInteger / cursor.getCount();
-        averageBetweenContractionsInteger = averageBetweenContractionsInteger / cursor.getCount();
-
-        averageContractionsTextView.setText(secondsToTimeString(averageContractionsInteger));
-        averageBetweenContractionsTextView.setText(secondsToTimeString(averageBetweenContractionsInteger));
-    }
-
-    private String secondsToTimeString(Integer inputSeconds) {
-        int seconds = (int) inputSeconds % 60;
-        int minutes = (int) ((inputSeconds / (60)) % 60);
-        int hours   = (int) ((inputSeconds / (60*60)) % 24);
-
-        return hours + "hr " + minutes + "mins " + seconds + "secs";
     }
 
     @Override
