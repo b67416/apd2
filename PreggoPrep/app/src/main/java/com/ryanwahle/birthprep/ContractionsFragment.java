@@ -139,8 +139,16 @@ public class ContractionsFragment extends Fragment {
 
         int sizeOfGraph = contractionLengthGraphViewDataArrayList.size();
 
-        graphView.getGraphViewStyle().setNumVerticalLabels(0);
-        graphView.getGraphViewStyle().setNumHorizontalLabels(0);
+        if (contractionLengthGraphViewDataArrayList.size() > 9) {
+            graphView.getGraphViewStyle().setNumVerticalLabels(10);
+            graphView.getGraphViewStyle().setNumHorizontalLabels(10);
+        } else if (contractionLengthGraphViewDataArrayList.size() == 0) {
+            graphView.getGraphViewStyle().setNumHorizontalLabels(1);
+            graphView.getGraphViewStyle().setNumVerticalLabels(1);
+        } else {
+            graphView.getGraphViewStyle().setNumHorizontalLabels(contractionLengthGraphViewDataArrayList.size());
+            graphView.getGraphViewStyle().setNumVerticalLabels(contractionLengthGraphViewDataArrayList.size());
+        }
         graphView.getGraphViewStyle().setGridStyle(GraphViewStyle.GridStyle.BOTH);
 
         graphView.setShowLegend(true);
