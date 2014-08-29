@@ -1,4 +1,4 @@
-package com.ryanwahle.preggoprep;
+package com.ryanwahle.birthprep;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,75 +20,78 @@ import android.widget.SimpleAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class KickTimesFragment extends ListFragment {
+public class AppointmentsFragment extends ListFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private SQLiteDatabase preggoPrepDatabase = null;
+    private ArrayList<HashMap<String, String>> appointmentsArrayList = null;
 
-    public static KickTimesFragment newInstance(int sectionNumber) {
-        KickTimesFragment fragment = new KickTimesFragment();
+    public static AppointmentsFragment newInstance(int sectionNumber) {
+        AppointmentsFragment fragment = new AppointmentsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public KickTimesFragment() { }
+    public AppointmentsFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_kick_times, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_appointments, container, false);
 
         setHasOptionsMenu(true);
 
         // Setup the SQLite Database
         preggoPrepDatabase = getActivity().openOrCreateDatabase("preggoprep", Context.MODE_PRIVATE, null);
-        preggoPrepDatabase.execSQL("CREATE TABLE IF NOT EXISTS kick_times (_id INTEGER PRIMARY KEY AUTOINCREMENT, start TIMESTAMP, stop TIMESTAMP, num_of_kicks INTEGER)");
+        preggoPrepDatabase.execSQL("CREATE TABLE IF NOT EXISTS appointments (_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, time TEXT, name TEXT, location TEXT)");
 
         return rootView;
     }
 
-    private void getKickTimesFromDB () {
-        Cursor cursor = preggoPrepDatabase.rawQuery("SELECT * FROM kick_times", new String[0]);
+    private void getAppointmentsFromDB () {
+        Cursor cursor = preggoPrepDatabase.rawQuery("SELECT * FROM appointments", new String[0]);
 
-        final ArrayList<HashMap<String, String>> kicktimesArrayList = new ArrayList<HashMap<String, String>>();
+        appointmentsArrayList = new ArrayList<HashMap<String, String>>();
 
         while (cursor.moveToNext()) {
             Integer rowID = cursor.getInt(cursor.getColumnIndex("_id"));
-            String startTimeStamp = cursor.getString(cursor.getColumnIndex("start"));
-            String stopTimeStamp = cursor.getString(cursor.getColumnIndex("stop"));
-            Integer numOfKicksInteger = cursor.getInt(cursor.getColumnIndex("num_of_kicks"));
+            String entryDate = cursor.getString(cursor.getColumnIndex("date"));
+            String entryTime = cursor.getString(cursor.getColumnIndex("time"));
+            String entryName = cursor.getString(cursor.getColumnIndex("name"));
+            String entryLocation = cursor.getString(cursor.getColumnIndex("location"));
 
-            HashMap<String, String> kicktimeesHashMap = new HashMap<String, String>();
-            kicktimeesHashMap.put("_id", rowID.toString());
-            kicktimeesHashMap.put("num_of_kicks", numOfKicksInteger.toString());
-            kicktimeesHashMap.put("start_time", startTimeStamp);
-            kicktimeesHashMap.put("stop_time", stopTimeStamp);
+            HashMap<String, String> appointmentHashMap = new HashMap<String, String>();
+            appointmentHashMap.put("_id", rowID.toString());
+            appointmentHashMap.put("date", entryDate);
+            appointmentHashMap.put("time", entryTime);
+            appointmentHashMap.put("name", entryName);
+            appointmentHashMap.put("location", entryLocation);
 
-            kicktimesArrayList.add(kicktimeesHashMap);
+            appointmentsArrayList.add(appointmentHashMap);
 
             //Log.v("Kick Time Entry Found", "ID: " + rowID + "\tStart Timestamp: " + startTimeStamp + "\tStop Timestamp: " + stopTimeStamp + "\tKick Count: " + numOfKicksInteger);
         }
 
-        String[] mapFrom = { "num_of_kicks", "start_time", "stop_time" };
-        int[] mapTo = { R.id.kick_times_textView_numberOfKicks, R.id.kick_times_textView_startTime, R.id.kick_times_textView_stopTime };
+        String[] mapFrom = { "date", "time", "name", "location" };
+        int[] mapTo = { R.id.appointments_textViewDate, R.id.appointments_textViewTime, R.id.appointments_textViewDoctorName, R.id.appointments_textViewLocation };
 
-        final SimpleAdapter adapter = new SimpleAdapter(getActivity(), kicktimesArrayList, R.layout.fragment_kick_times_listview_item, mapFrom, mapTo);
+        final SimpleAdapter adapter = new SimpleAdapter(getActivity(), appointmentsArrayList, R.layout.fragment_appointments_listview_item, mapFrom, mapTo);
         setListAdapter(adapter);
 
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
                 final int position = pos;
-                final HashMap<String, String> kicktimeHashMap = kicktimesArrayList.get(position);
+                final HashMap<String, String> appointmentHashMap = appointmentsArrayList.get(position);
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                alertDialog.setTitle("Delete Kick Time Entry");
-                alertDialog.setMessage("Are you sure you want delete this entry?");
+                alertDialog.setTitle("Delete Appointment");
+                alertDialog.setMessage("Are you sure you want delete this appointment?");
                 alertDialog.setNegativeButton("No", null);
                 alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int which) {
-                        preggoPrepDatabase.execSQL("DELETE FROM kick_times WHERE _id = " + kicktimeHashMap.get("_id"));
-                        kicktimesArrayList.remove(position);
+                        preggoPrepDatabase.execSQL("DELETE FROM appointments WHERE _id = " + appointmentHashMap.get("_id"));
+                        appointmentsArrayList.remove(position);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -98,7 +100,6 @@ public class KickTimesFragment extends ListFragment {
                 return true;
             }
         });
-
     }
 
     @Override
@@ -108,30 +109,24 @@ public class KickTimesFragment extends ListFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        preggoPrepDatabase.close();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        getKickTimesFromDB();
+        getAppointmentsFromDB();
     }
 
     // Inflate Action Bar Items
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_kick_times, menu);
+        inflater.inflate(R.menu.fragment_appointments, menu);
     }
 
     // When user clicks the Action Bar Item to add a new Blood Pressure Entry
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        KickTimesNewEntryDialog kickTimesNewEntryDialog = new KickTimesNewEntryDialog();
-        kickTimesNewEntryDialog.setLoadingFragment(this);
-        kickTimesNewEntryDialog.setCancelable(false);
-        kickTimesNewEntryDialog.show(getFragmentManager(), "New Kick Time Entry");
+        AppointmentsNewEntryDialog appointmentsNewEntryDialog = new AppointmentsNewEntryDialog();
+        appointmentsNewEntryDialog.setLoadingFragment(this);
+        appointmentsNewEntryDialog.setCancelable(false);
+        appointmentsNewEntryDialog.show(getFragmentManager(), "New Appointment Entry");
 
         return true;
     }

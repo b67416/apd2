@@ -1,4 +1,4 @@
-package com.ryanwahle.preggoprep;
+package com.ryanwahle.birthprep;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -10,89 +10,69 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
 
-
-public class BloodPressureNewEntryDialog extends DialogFragment {
+public class AppointmentsNewEntryDialog extends DialogFragment {
     private AlertDialog newEntryDialog = null;
-    private Fragment loadingFragment = null;
 
     private SQLiteDatabase preggoPrepDatabase = null;
 
-    private NumberPicker systolicNumberPicker = null;
-    private NumberPicker diastolicNumberPicker = null;
     private TextView entryDateTextView = null;
     private TextView entryTimeTextView = null;
-
-    private int dateMonth = -1;
-    private int dateDay = -1;
-    private int dateYear = -1;
-
-    private int timeHour = -1;
-    private int timeMinute = -1;
+    private TextView entryDoctorTextView = null;
+    private TextView entryLocationTextView = null;
 
     private boolean isDateSet = false;
     private boolean isTimeSet = false;
 
+    private Fragment loadingFragment = null;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder newEntryDialogBuilder = new AlertDialog.Builder(getActivity());
-        View rootView = getActivity().getLayoutInflater().inflate(R.layout.dialog_blood_pressure_new_entry, null);
+        View rootView = getActivity().getLayoutInflater().inflate(R.layout.dialog_appointments_new_entry, null);
 
         // Setup the SQLite Database
         preggoPrepDatabase = getActivity().openOrCreateDatabase("preggoprep", Context.MODE_PRIVATE, null);
 
+        // Setup the interface references
+        entryDateTextView = (TextView) rootView.findViewById(R.id.appointments_newEntry_textViewSetDate);
+        entryTimeTextView = (TextView) rootView.findViewById(R.id.appointments_newEntry_textViewSetTime);
+        entryDoctorTextView = (TextView) rootView.findViewById(R.id.appointments_newEntry_textViewDoctor);
+        entryLocationTextView = (TextView) rootView.findViewById(R.id.appointments_newEntry_textViewLocation);
+
         // Setup the dialog
         newEntryDialogBuilder.setView(rootView);
-        newEntryDialogBuilder.setTitle("New Blood Pressure Entry");
+        newEntryDialogBuilder.setTitle("New Appointment");
 
         newEntryDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                preggoPrepDatabase.execSQL("INSERT INTO blood_pressure (date, time, systolic, diastolic) VALUES ('" + entryDateTextView.getText() + "', '" + entryTimeTextView.getText() + "', " + systolicNumberPicker.getValue() + ", " + diastolicNumberPicker.getValue() + ")");
-                Toast.makeText(getActivity(), "New Blood Pressure Entry Saved!", Toast.LENGTH_LONG).show();
-                //Log.v("New BP Entry", "Date: " + entryDateTextView.getText() + "\tTime: " + entryTimeTextView.getText() + "\tSystolic: " + systolicNumberPicker.getValue() + "\tDiastolic: " + diastolicNumberPicker.getValue());
+                Log.v("New BP Entry", "Date: " + entryDateTextView.getText() + "\tTime: " + entryTimeTextView.getText() + "\tDoctor: " + entryDoctorTextView.getText() + "\tAddress: " + entryLocationTextView.getText());
+                preggoPrepDatabase.execSQL("INSERT INTO appointments (date, time, name, location) values ('" + entryDateTextView.getText() + "', '" + entryTimeTextView.getText() + "', '" + entryDoctorTextView.getText() + "', '" + entryLocationTextView.getText() + "')");
+                Toast.makeText(getActivity(), "New Appointment Saved!", Toast.LENGTH_LONG).show();
             }
         });
 
         newEntryDialogBuilder.setNegativeButton("Cancel", null);
         newEntryDialog = newEntryDialogBuilder.create();
 
-        // Disable the OK button until both Date and Time have been selected
+        // Disable the OK button until Date, Time, Doctor, and Location have been selected/entered
         newEntryDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 newEntryDialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
             }
         });
-
-        // Setup the interface references
-        systolicNumberPicker = (NumberPicker) rootView.findViewById(R.id.systolicNumberPicker);
-        diastolicNumberPicker = (NumberPicker) rootView.findViewById(R.id.diastolicNumberPicker);
-        entryDateTextView = (TextView) rootView.findViewById(R.id.textViewSetDate);
-        entryTimeTextView = (TextView) rootView.findViewById(R.id.textViewSetTime);
-
-        // Setup the number pickers for the blood pressure.
-        systolicNumberPicker.setMinValue(0);
-        systolicNumberPicker.setMaxValue(300);
-        systolicNumberPicker.setValue(120);
-        systolicNumberPicker.setWrapSelectorWheel(false);
-
-        diastolicNumberPicker.setMinValue(0);
-        diastolicNumberPicker.setMaxValue(300);
-        diastolicNumberPicker.setValue(80);
-        diastolicNumberPicker.setWrapSelectorWheel(false);
 
         // Setup the date and time pickers
         entryDateTextView.setOnClickListener(new View.OnClickListener() {
@@ -131,13 +111,35 @@ public class BloodPressureNewEntryDialog extends DialogFragment {
             }
         });
 
-        return newEntryDialog;
-    }
+        // Continuously monitor the text in the Doctor and Location to see if there is
+        // a value so that we can enable the OK button
+        entryDoctorTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            @Override
+            public void afterTextChanged(Editable editable) { }
 
-    private void resetDialogPositiveButton () {
-        if (isDateSet && isTimeSet) {
-            newEntryDialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(true);
-        }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                resetDialogPositiveButton();
+            }
+        });
+
+        entryLocationTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            @Override
+            public void afterTextChanged(Editable editable) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                resetDialogPositiveButton();
+            }
+
+
+        });
+
+        return newEntryDialog;
     }
 
     public void setLoadingFragment(Fragment fragment) {
@@ -149,5 +151,11 @@ public class BloodPressureNewEntryDialog extends DialogFragment {
         super.onDestroyView();
         preggoPrepDatabase.close();
         loadingFragment.onResume();
+    }
+
+    private void resetDialogPositiveButton () {
+        if (isDateSet && isTimeSet && !entryDoctorTextView.getText().toString().isEmpty() && !entryLocationTextView.getText().toString().isEmpty()) {
+            newEntryDialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(true);
+        }
     }
 }

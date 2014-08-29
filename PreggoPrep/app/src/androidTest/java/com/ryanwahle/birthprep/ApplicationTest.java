@@ -1,4 +1,4 @@
-package com.ryanwahle.preggoprep;
+package com.ryanwahle.birthprep;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

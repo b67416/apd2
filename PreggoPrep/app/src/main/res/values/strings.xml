@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Preggo Prep</string>
+    <string name="app_name">Birth Prep</string>
 
     <string name="title_appointments">Appointments</string>
     <string name="title_blood_pressure">Blood Pressure</string>
